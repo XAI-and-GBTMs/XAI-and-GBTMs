@@ -1,0 +1,94 @@
+## Dataset README
+
+This folder contains the datasets used to verify claims from the XGBoost paper:
+
+> Chen, T., & Guestrin, C. (2016). *XGBoost: A Scalable Tree Boosting System* (KDD'16).
+
+## Quick Mapping (Dataset -> Verification Script)
+
+- `HIGGS.csv` -> `verification/verify_classification.py`, `verification/verify_cache_aware.py`
+- `adult/adult.data`, `adult/adult.test` -> `verification/verify_sparse_aware_algorithm.py`
+- `allstate_raw/train_set.csv` -> `verification/verify_sparse_aware_algorithm.py`, `verification/verify_cache_aware.py`
+- `MQ2008/Fold1/{train,test,vali}.txt` -> `verification/verify_ltr.py`
+- `day_2.gz`, `day_3.gz`, `day_4.gz`, `day_5.gz` (and optional `day_2.tsv`) -> `verification/verify_out_of_core.py`
+
+## Datasets
+
+### 1) HIGGS
+
+- File(s): `HIGGS.csv` (used), `HIGGS.csv.gz` (compressed copy)
+- Task: Binary classification
+- Used in:
+  - `verification/verify_classification.py`
+  - `verification/verify_cache_aware.py`
+- Expected format:
+  - CSV without header
+  - First column = label
+  - Remaining columns = numeric features
+- Notes:
+  - `verify_classification.py` reads up to 1,000,000 rows
+  - `verify_cache_aware.py` reads up to 10,000,000 rows
+
+### 2) Adult (UCI Census Income)
+
+- File(s): `adult/adult.data`, `adult/adult.test`
+- Task: Binary income classification with missing-value handling
+- Used in:
+  - `verification/verify_sparse_aware_algorithm.py`
+- Expected format:
+  - Comma-separated columns matching UCI Adult schema
+  - Missing value marker: `?`
+- Notes:
+  - Script normalizes whitespace
+  - `adult.test` labels may include a trailing `.` and are cleaned in code
+
+### 3) Allstate (raw)
+
+- File(s): `allstate_raw/train_set.csv`
+- Related archives in this folder: `train_set.7z`, `train_set.zip`
+- Task: Large-scale sparse/categorical classification style benchmarks
+- Used in:
+  - `verification/verify_sparse_aware_algorithm.py`
+  - `verification/verify_cache_aware.py`
+- Expected format:
+  - CSV with columns such as `Blind_Make`, `Blind_Model`, `Blind_Submodel`, `Cat1..Cat12`, `NVCat`, and `Claim_Amount`
+- Notes:
+  - One-hot encoding is applied in scripts
+  - `verify_sparse_aware_algorithm.py` uses a smaller sample; `verify_cache_aware.py` may use much larger row counts
+
+### 4) MQ2008 (LETOR)
+
+- Folder: `MQ2008/`
+- File(s) used directly: `MQ2008/Fold1/train.txt`, `MQ2008/Fold1/test.txt`, `MQ2008/Fold1/vali.txt`
+- Related archive in this folder: `MQ2008.rar`
+- Task: Learning to Rank (query-grouped ranking)
+- Used in:
+  - `verification/verify_ltr.py`
+- Expected format:
+  - LETOR/libsvm-like lines: `<label> qid:<id> <feature_id>:<value> ...`
+- Notes:
+  - Query IDs (`qid`) are used to build ranking groups for XGBoost
+  - Script combines train + validation and evaluates on Fold1 test
+
+### 5) Criteo (days 2-5 subset for this project)
+
+- File(s): `day_2.gz`, `day_3.gz`, `day_4.gz`, `day_5.gz`
+- Optional uncompressed file: `day_2.tsv`
+- Task: Out-of-core and I/O vs compute behavior checks
+- Used in:
+  - `verification/verify_out_of_core.py`
+- Expected format:
+  - Tab-separated with no header
+  - Column layout in script: `label`, `num_0..num_12`, `cat_0..cat_25`
+- Notes:
+  - Script can compare compressed read time (`day_2.gz`) vs uncompressed read time (`day_2.tsv`) when available
+
+## File Placement
+
+This README assumes scripts are run from the `verification/` folder inside `Verification of XGBoost paper/` and use relative paths like `../data/...`.
+
+## Reproducibility Tips
+
+- Keep original filenames unchanged, because scripts reference fixed names.
+- If using archives (`.zip`, `.7z`, `.rar`), extract them so the final files match paths listed above.
+- Ensure enough disk/RAM before running high-row-count experiments (especially HIGGS and Allstate).
