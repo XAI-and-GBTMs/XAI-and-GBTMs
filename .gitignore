@@ -1,0 +1,9 @@
+# Datasets
+CNNs_on_Chest_X_Ray/chest_xray/
+CNNs_on_Chest_X_Ray/Chest-X-Ray Epic Hospital Chittagong, Bangladesh pneumonia/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
