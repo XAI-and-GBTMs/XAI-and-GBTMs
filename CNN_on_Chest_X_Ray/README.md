@@ -63,12 +63,15 @@ The key finding: on the Kaggle dataset, the model's SHAP maps were not consisten
 pip install torch torchvision shap opencv-python scikit-learn matplotlib numpy
 ```
 
-### 2. Download the dataset
+### 2. Download the datasets
 
-Download the **Chest X-Ray Images (Pneumonia)** dataset from Kaggle:
+Download the **Chest X-Ray Images (Pneumonia)** dataset from Kaggle (used for training/in-distribution evaluation):
 https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 
-Extract it so the directory structure looks like this:
+Download the **Chest X-Ray Epic Hospital, Chittagong, Bangladesh** dataset from Mendeley (used for cross-dataset evaluation):
+https://data.mendeley.com/datasets/wndbd5r26y/2
+
+Extract them so the directory structure looks like this:
 
 ```
 CNNs_on_Chest_X_Ray/
@@ -82,6 +85,13 @@ CNNs_on_Chest_X_Ray/
 │   └── test/
 │       ├── NORMAL/
 │       └── PNEUMONIA/
+├── Chest-X-Ray Epic Hospital Chittagong, Bangladesh pneumonia/
+│   ├── Training/
+│   │   ├── normal/
+│   │   └── pneumonia/
+│   └── Testing/
+│       ├── normal/
+│       └── pneumonia/
 ├── pneumonia_classification.ipynb
 └── cross_dataset_evaluation.ipynb
 ```
